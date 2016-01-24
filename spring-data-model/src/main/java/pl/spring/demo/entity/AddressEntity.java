@@ -1,6 +1,11 @@
 package pl.spring.demo.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
@@ -10,9 +15,13 @@ public class AddressEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "CITY")
     private String city;
+    @Column(name = "STREET")
     private String street;
+    @Column(name = "STREET_NUMBER")
     private String streetNumber;
+    @Column(name = "POSTAL_CODE")
     private String postalCode;
 
     public Long getId() {

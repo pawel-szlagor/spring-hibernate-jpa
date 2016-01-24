@@ -48,6 +48,12 @@
             <artifactId>hibernate-validator-annotation-processor</artifactId>
             <version>5.1.2.Final</version>
         </dependency>
+        <!-- MySQL database driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.9</version>
+        </dependency>
     </dependencies>
 
 </project>

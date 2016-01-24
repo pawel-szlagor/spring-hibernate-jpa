@@ -1,8 +1,14 @@
 package pl.spring.demo.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Set;
 
 @Entity
 @Table(name = "PERSON")
@@ -16,8 +22,6 @@ public abstract class PersonEntity implements Serializable {
     @Column(nullable = false, length = 50)
     private String lastName;
     private int age;
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "authors")
-    private Set<BookEntity> books;
 
     public Long getId() {
         return id;
@@ -49,13 +53,5 @@ public abstract class PersonEntity implements Serializable {
 
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public Set<BookEntity> getBooks() {
-        return books;
-    }
-
-    public void setBooks(Set<BookEntity> books) {
-        this.books = books;
     }
 }
