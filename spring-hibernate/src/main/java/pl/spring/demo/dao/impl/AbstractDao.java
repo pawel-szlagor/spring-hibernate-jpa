@@ -1,16 +1,16 @@
 package pl.spring.demo.dao.impl;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import pl.spring.demo.dao.Dao;
-
-import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-@Transactional(Transactional.TxType.SUPPORTS)
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import pl.spring.demo.dao.Dao;
+
+@Transactional()
 public abstract class AbstractDao<T> implements Dao<T> {
     @Autowired
     private SessionFactory sessionFactory;

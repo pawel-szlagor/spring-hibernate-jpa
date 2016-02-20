@@ -1,5 +1,9 @@
 package pl.spring.demo.repository.impl;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
 import org.jinq.jpa.JPAJinqStream;
 import org.jinq.jpa.JPQL;
 import org.jinq.jpa.JinqJPAStreamProvider;
@@ -8,11 +12,6 @@ import pl.spring.demo.entity.BookEntity;
 import pl.spring.demo.entity.LibraryEntity;
 import pl.spring.demo.repository.LibraryLambdaRepository;
 import pl.spring.demo.searchcriteria.LibrarySearchCriteria;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LibraryRepositoryImpl implements LibraryLambdaRepository {
 
@@ -46,10 +45,10 @@ public class LibraryRepositoryImpl implements LibraryLambdaRepository {
             String libraryName = librarySearchCriteria.getName();
             stream = stream.where(l -> l.getName().equals(libraryName));
         }
-        if (!librarySearchCriteria.getAnyBook().isEmpty()) {
-            List<String> lambdaParameter = new ArrayList<>(librarySearchCriteria.getAnyBook());
-            stream = stream.where((l, source) -> JPQL.listContains(lambdaParameter, source.stream(BookEntity.class).where(b -> b.getLibrary()
-                    .getId() == l.getId()).select(b -> b.getTitle()).getOnlyValue()));
+        if (!librarySearchCriteria.getBookTitle().isEmpty()) {
+            String lambdaParameter = librarySearchCriteria.getBookTitle();
+            stream = stream.where((l, source) -> JPQL.isIn(lambdaParameter, source.stream(BookEntity.class).where(b -> b.getLibrary()
+                    .getId() == l.getId()).select(b -> b.getTitle())));
         }
         return stream.toList();
     }

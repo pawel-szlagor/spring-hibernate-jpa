@@ -1,5 +1,6 @@
 package pl.spring.demo.to;
 
+import org.joda.money.Money;
 import pl.spring.demo.enums.MeasureUnits;
 
 /**
@@ -11,19 +12,17 @@ public class ProductTo {
     private String name;
     private String pkwiu;
     private MeasureUnits measureUnit;
-    private double quantity;
-    private double unitPriceNetto;
-    private double taxRate;
+    private Money unitPriceNetto;
+    private TaxRateTo taxRate;
 
     protected ProductTo() {
     }
 
-    public ProductTo(Long id, String name, String pkwiu, MeasureUnits measureUnit, double quantity, double unitPriceNetto, double taxRate) {
+    public ProductTo(Long id, String name, String pkwiu, MeasureUnits measureUnit, Money unitPriceNetto, TaxRateTo taxRate) {
         this.id = id;
         this.name = name;
         this.pkwiu = pkwiu;
         this.measureUnit = measureUnit;
-        this.quantity = quantity;
         this.unitPriceNetto = unitPriceNetto;
         this.taxRate = taxRate;
     }
@@ -60,27 +59,28 @@ public class ProductTo {
         this.measureUnit = measureUnit;
     }
 
-    public double getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(double quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getUnitPriceNetto() {
+    public Money getUnitPriceNetto() {
         return unitPriceNetto;
     }
 
-    public void setUnitPriceNetto(double unitPriceNetto) {
+    public void setUnitPriceNetto(Money unitPriceNetto) {
         this.unitPriceNetto = unitPriceNetto;
     }
 
-    public double getTaxRate() {
+    public TaxRateTo getTaxRate() {
         return taxRate;
     }
 
-    public void setTaxRate(double taxRate) {
+    public void setTaxRate(TaxRateTo taxRate) {
         this.taxRate = taxRate;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\t(").append(id).append(")\t").append(name).append("\t")
+                .append(unitPriceNetto).append("\u20ac\tvat ").append(taxRate.getValue()).append("%");
+        return sb.toString();
+    }
+
 }

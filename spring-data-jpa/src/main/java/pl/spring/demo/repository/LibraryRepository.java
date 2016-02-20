@@ -3,7 +3,6 @@ package pl.spring.demo.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pl.spring.demo.entity.AuthorEntity;
 import pl.spring.demo.entity.LibraryEntity;
 
 import java.util.List;

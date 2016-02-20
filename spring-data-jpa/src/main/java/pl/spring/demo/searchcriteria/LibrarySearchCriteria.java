@@ -1,14 +1,12 @@
 package pl.spring.demo.searchcriteria;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 public class LibrarySearchCriteria implements Serializable {
 
     private Long id;
     private String name;
-    private Set<String> anyBook = new HashSet<>();
+    private String bookTitle;
 
     private LibrarySearchCriteria() {
 
@@ -22,8 +20,8 @@ public class LibrarySearchCriteria implements Serializable {
         return name;
     }
 
-    public Set<String> getAnyBook() {
-        return new HashSet<>(anyBook);
+    public String getBookTitle() {
+        return bookTitle;
     }
 
     public static class LibrarySearchCriteriaBuilder {
@@ -39,8 +37,8 @@ public class LibrarySearchCriteria implements Serializable {
             return this;
         }
 
-        public LibrarySearchCriteriaBuilder withBook(String bookTitile) {
-            librarySearchCriteria.anyBook.add(bookTitile);
+        public LibrarySearchCriteriaBuilder withBook(String bookTitle) {
+            librarySearchCriteria.bookTitle = bookTitle;
             return this;
         }
 

@@ -1,6 +1,5 @@
 package pl.spring.demo.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,10 +18,10 @@ public class AuthorEntity extends PersonEntity implements Serializable {
     @Column(name = "publications")
     private int publicationsNumber;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "book_author",
-            joinColumns = {@JoinColumn(name = "BOOK_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "AUTHOR_ID", nullable = false, updatable = false)})
+            joinColumns = {@JoinColumn(name = "AUTHOR_ID", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "BOOK_ID", nullable = false, updatable = true)})
     private Set<BookEntity> books;
 
     public int getPublicationsNumber() {

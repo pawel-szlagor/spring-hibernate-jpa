@@ -2,7 +2,7 @@ package pl.spring.demo.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "BOOK")
@@ -12,11 +12,11 @@ public class BookEntity implements Serializable {
     private long id;
     @Column(nullable = false, length = 50)
     private String title;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "book_author",
-            joinColumns = {@JoinColumn(name = "BOOK_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "AUTHOR_ID", nullable = false, updatable = false)})
-    private Set<AuthorEntity> authors;
+            joinColumns = {@JoinColumn(name = "BOOK_ID", nullable = false, updatable = true)},
+            inverseJoinColumns = {@JoinColumn(name = "AUTHOR_ID", nullable = false, updatable = true)})
+    private List<AuthorEntity> authors;
     @ManyToOne(optional = true)
     @JoinColumn(name = "LIBRARY_ID", nullable = true)
     private LibraryEntity library;
@@ -45,11 +45,11 @@ public class BookEntity implements Serializable {
         this.title = title;
     }
 
-    public Set<AuthorEntity> getAuthors() {
+    public List<AuthorEntity> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(Set<AuthorEntity> authors) {
+    public void setAuthors(List<AuthorEntity> authors) {
         this.authors = authors;
     }
 

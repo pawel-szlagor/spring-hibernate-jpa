@@ -1,4 +1,6 @@
-package pl.spring.demo.service.impl;
+package pl.spring.layout.service.impl.impl;
+
+import java.util.List;
 
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +10,6 @@ import pl.spring.demo.dao.LibraryDao;
 import pl.spring.demo.entity.LibraryEntity;
 import pl.spring.demo.service.LibraryService;
 import pl.spring.demo.to.LibraryTo;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

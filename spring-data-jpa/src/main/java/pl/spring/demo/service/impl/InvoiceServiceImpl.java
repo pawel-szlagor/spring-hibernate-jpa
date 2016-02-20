@@ -1,18 +1,45 @@
 package pl.spring.demo.service.impl;
 
+import java.util.List;
+
+import ma.glasnost.orika.MapperFacade;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+import pl.spring.demo.entity.InvoiceEntity;
+import pl.spring.demo.repository.InvoiceRepository;
 import pl.spring.demo.service.InvoiceService;
+import pl.spring.demo.to.InvoiceTo;
 
 /**
  * Created by Paweł on 24.01.2016.
  */
 @Service
+@ComponentScan("pl.spring.demo.mapper")
 public class InvoiceServiceImpl implements InvoiceService {
     private static final String[] CURRENCY = {"złote", "złotych"};
+
+    @Autowired
+    private InvoiceRepository invoiceRepository;
+
+    @Autowired
+    private MapperFacade mapper;
 
     @Override
     public String amountInWords(double amount) {
         return translacja((long) amount) + prefix(amount);
+    }
+
+    @Override
+    public List<InvoiceTo> findAllInvoices() {
+        List<InvoiceEntity> invoices = invoiceRepository.findAll();
+        return mapper.mapAsList(invoices, InvoiceTo.class);
+    }
+
+    @Override
+    public InvoiceTo findInvoiceById(Long id) {
+        InvoiceEntity invoiceEntity = invoiceRepository.findOne(id);
+        return mapper.map(invoiceEntity, InvoiceTo.class);
     }
 
     private String prefix(double amount) {

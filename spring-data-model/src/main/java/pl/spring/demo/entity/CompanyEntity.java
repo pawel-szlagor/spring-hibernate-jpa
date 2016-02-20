@@ -32,7 +32,10 @@ public abstract class CompanyEntity implements Serializable {
     private String phoneNumber;
     @Column(nullable = true, length = 50)
     private String eMail;
-
+    @Column(nullable = false, length = 10, unique = true)
+    private String NIP;
+    @Column(nullable = true, length = 14)
+    private String REGON;
     @Version
     private long version;
 
@@ -98,6 +101,22 @@ public abstract class CompanyEntity implements Serializable {
 
     public void seteMail(String eMail) {
         this.eMail = eMail;
+    }
+
+    public String getNIP() {
+        return NIP;
+    }
+
+    public void setNIP(String NIP) {
+        this.NIP = NIP;
+    }
+
+    public String getREGON() {
+        return REGON;
+    }
+
+    public void setREGON(String REGON) {
+        this.REGON = REGON;
     }
 
     public long getVersion() {

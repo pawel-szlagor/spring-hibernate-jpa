@@ -19,4 +19,30 @@ public class TaxRateEntity implements Serializable {
     private Long id;
     @Column(nullable = false, precision = 2, scale = 4, name = "TAX_RATE_VALUE")
     private double value;
+    @Column(nullable = false, length = 10, name = "TAX_RATE_DESC")
+    private String desc;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 }

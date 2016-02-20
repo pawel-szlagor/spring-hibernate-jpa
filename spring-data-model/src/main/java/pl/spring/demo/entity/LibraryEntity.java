@@ -2,7 +2,7 @@ package pl.spring.demo.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "LIBRARY")
@@ -15,7 +15,7 @@ public class LibraryEntity implements Serializable {
     @JoinColumn(name = "address_id", nullable = true)
     private AddressEntity address;
     @OneToMany(mappedBy = "library", orphanRemoval = false, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private Set<BookEntity> books;
+    private List<BookEntity> books;
     @Version
     private long version;
 
@@ -43,11 +43,11 @@ public class LibraryEntity implements Serializable {
         this.address = address;
     }
 
-    public Set<BookEntity> getBooks() {
+    public List<BookEntity> getBooks() {
         return books;
     }
 
-    public void setBooks(Set<BookEntity> books) {
+    public void setBooks(List<BookEntity> books) {
         this.books = books;
     }
 

@@ -30,8 +30,7 @@ public class AuthorRepositoryTest {
         assertEquals(authorEntity.getFirstName(), "Jan");
         assertEquals(authorEntity.getId().longValue(), 1L);
         assertEquals(authorEntity.getLastName(), "Kowalski");
-        assertEquals(authorEntity.getBooks().size(), 1);
+        assertEquals(authorEntity.getBooks().size(), 2);
     }
-
 
 }

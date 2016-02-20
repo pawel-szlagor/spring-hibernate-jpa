@@ -1,13 +1,13 @@
 package pl.spring.demo.enums;
 
 public enum MeasureUnits {
-    KG("kg)"),
+    KG("kg"),
     SZT("szt."),
     M2("m2"),
     SIXTY_MIN("60 min."),
     KPL("kpl."),;
 
-    private String name; // price of each apple
+    private String name;
 
     MeasureUnits(String name) {
         this.name = name;

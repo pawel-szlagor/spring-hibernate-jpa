@@ -8,6 +8,7 @@ public class TaxRateTo {
 
     private Long id;
     private Double value;
+    private String desc;
 
     public TaxRateTo() {
     }
@@ -31,5 +32,13 @@ public class TaxRateTo {
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

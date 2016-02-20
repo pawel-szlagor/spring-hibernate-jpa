@@ -1,5 +1,7 @@
 package pl.spring.demo.service.impl;
 
+import java.util.List;
+
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,9 +11,7 @@ import pl.spring.demo.repository.LibraryRepository;
 import pl.spring.demo.service.LibraryService;
 import pl.spring.demo.to.LibraryTo;
 
-import java.util.List;
-
-@Service
+@Service()
 @Transactional(readOnly = true)
 public class LibraryServiceImpl implements LibraryService {
 

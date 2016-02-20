@@ -1,11 +1,18 @@
 package pl.spring.demo.service;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
+
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import pl.spring.demo.to.InvoiceTo;
 
 /**
  * Created by Paweł on 24.01.2016.
@@ -18,13 +25,30 @@ public class InvoiceServiceTest {
     private InvoiceService invoiceService;
 
     @Test
+    public void testShouldCalculateTotamSumNetto() {
+        // given when
+        InvoiceTo invoice = invoiceService.findInvoiceById(1L);
+        // then
+        assertEquals(Money.of(CurrencyUnit.of("PLN"), 2611.80), invoice.getTotalNetto());
+    }
+
+    @Test
+    public void testShouldFindAllInvoices() {
+        // given when
+        List<InvoiceTo> invoices = invoiceService.findAllInvoices();
+        // then
+        assertNotNull(invoices);
+        assertEquals(1, invoices.size());
+    }
+
+    @Test
     public void shouldChangePositiveNonDecimalAmountToWords() {
         //given
         double amount = 121;
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
-        Assert.assertEquals("sto dwadzieścia jeden złotych, 00/100", inWords);
+        assertEquals("sto dwadzieścia jeden złotych, 00/100", inWords);
     }
 
     @Test
@@ -34,7 +58,7 @@ public class InvoiceServiceTest {
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
-        Assert.assertEquals("milion dwieście trzydzieści cztery tysiące pięćset sześćdziesiąt siedem złotych, 00/100", inWords);
+        assertEquals("milion dwieście trzydzieści cztery tysiące pięćset sześćdziesiąt siedem złotych, 00/100", inWords);
     }
 
     @Test
@@ -44,7 +68,7 @@ public class InvoiceServiceTest {
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
-        Assert.assertEquals("sto dwadzieścia cztery złote, 45/100", inWords);
+        assertEquals("sto dwadzieścia cztery złote, 45/100", inWords);
     }
 
     @Test
@@ -54,7 +78,7 @@ public class InvoiceServiceTest {
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
-        Assert.assertEquals("sto dwadzieścia dwa złote, 45/100", inWords);
+        assertEquals("sto dwadzieścia dwa złote, 45/100", inWords);
     }
 
     @Test
@@ -64,7 +88,7 @@ public class InvoiceServiceTest {
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
-        Assert.assertEquals("milion dwieście trzydzieści cztery tysiące pięćset sześćdziesiąt siedem złotych, 89/100", inWords);
+        assertEquals("milion dwieście trzydzieści cztery tysiące pięćset sześćdziesiąt siedem złotych, 89/100", inWords);
     }
 
     @Test
@@ -74,7 +98,7 @@ public class InvoiceServiceTest {
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
-        Assert.assertEquals("milion dwieście tysięcy pięćset sześćdziesiąt złotych, 10/100", inWords);
+        assertEquals("milion dwieście tysięcy pięćset sześćdziesiąt złotych, 10/100", inWords);
     }
 
     @Test
@@ -84,7 +108,7 @@ public class InvoiceServiceTest {
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
-        Assert.assertEquals("zero złotych, 00/100", inWords);
+        assertEquals("zero złotych, 00/100", inWords);
     }
 
     @Test
@@ -94,6 +118,6 @@ public class InvoiceServiceTest {
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
-        Assert.assertEquals("zero złotych, 00/100", inWords);
+        assertEquals("zero złotych, 00/100", inWords);
     }
 }

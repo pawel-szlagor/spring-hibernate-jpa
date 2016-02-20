@@ -2,17 +2,15 @@ package pl.spring.demo.to;
 
 import java.util.Set;
 
-import pl.spring.demo.entity.InvoiceEntity;
+public class CustomerTo extends CompanyTo{
 
-public class CustomerTo {
+    private Set<InvoiceTo> invoices;
 
-    private Set<InvoiceEntity> invoices;
-
-    public Set<InvoiceEntity> getInvoices() {
+    public Set<InvoiceTo> getInvoices() {
         return invoices;
     }
 
-    public void setInvoices(Set<InvoiceEntity> invoices) {
+    public void setInvoices(Set<InvoiceTo> invoices) {
         this.invoices = invoices;
     }
 
@@ -21,7 +19,7 @@ public class CustomerTo {
     }
 
 
-    public CustomerTo(Set<InvoiceEntity> invoices) {
+    public CustomerTo(Set<InvoiceTo> invoices) {
         this.invoices = invoices;
     }
 
