@@ -3,6 +3,7 @@ package pl.spring.demo.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.money.CurrencyUnit;
@@ -44,7 +45,7 @@ public class InvoiceServiceTest {
     @Test
     public void shouldChangePositiveNonDecimalAmountToWords() {
         //given
-        double amount = 121;
+        BigDecimal amount = BigDecimal.valueOf(121);
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
@@ -54,7 +55,7 @@ public class InvoiceServiceTest {
     @Test
     public void shouldChangeBigPositiveNonDecimalAmountToWords() {
         //given
-        double amount = 1234567;
+        BigDecimal amount = BigDecimal.valueOf(1234567);
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
@@ -64,7 +65,7 @@ public class InvoiceServiceTest {
     @Test
     public void shouldChangePositiveDecimalAmountToWords() {
         //given
-        double amount = 124.45;
+        BigDecimal amount = BigDecimal.valueOf(124.45);
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
@@ -74,7 +75,7 @@ public class InvoiceServiceTest {
     @Test
     public void shouldChangePositiveNonRegularDecimalAmountToWords() {
         //given
-        double amount = 122.45;
+        BigDecimal amount = BigDecimal.valueOf(122.45);
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
@@ -84,7 +85,7 @@ public class InvoiceServiceTest {
     @Test
     public void shouldChangeBigPositiveDecimalAmountToWords() {
         //given
-        double amount = 1234567.89;
+        BigDecimal amount = BigDecimal.valueOf(1234567.89);
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
@@ -94,7 +95,7 @@ public class InvoiceServiceTest {
     @Test
     public void shouldChangeBigPositiveDecimalWithTenAmountToWords() {
         //given
-        double amount = 1200560.10;
+        BigDecimal amount = BigDecimal.valueOf(1200560.10);
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
@@ -104,7 +105,7 @@ public class InvoiceServiceTest {
     @Test
     public void shouldChangeZeroToWords() {
         //given
-        double amount = 0;
+        BigDecimal amount = BigDecimal.ZERO;
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then
@@ -114,7 +115,7 @@ public class InvoiceServiceTest {
     @Test
     public void shouldChangeZeroInDecimalToWords() {
         //given
-        double amount = 0.00;
+        BigDecimal amount = BigDecimal.valueOf(0.00);
         //when
         String inWords = invoiceService.amountInWords(amount);
         //then

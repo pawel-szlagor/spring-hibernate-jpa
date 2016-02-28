@@ -48,7 +48,7 @@ public class LibraryRepositoryImpl implements LibraryLambdaRepository {
         if (!librarySearchCriteria.getBookTitle().isEmpty()) {
             String lambdaParameter = librarySearchCriteria.getBookTitle();
             stream = stream.where((l, source) -> JPQL.isIn(lambdaParameter, source.stream(BookEntity.class).where(b -> b.getLibrary()
-                    .getId() == l.getId()).select(b -> b.getTitle())));
+                    .getId() == l.getId()).select(BookEntity::getTitle)));
         }
         return stream.toList();
     }

@@ -1,5 +1,6 @@
 package pl.spring.demo.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import ma.glasnost.orika.MapperFacade;
@@ -26,8 +27,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     private MapperFacade mapper;
 
     @Override
-    public String amountInWords(double amount) {
-        return translacja((long) amount) + prefix(amount);
+    public String amountInWords(BigDecimal amount) {
+        return translacja(amount.longValue()) + prefix(amount.doubleValue());
     }
 
     @Override

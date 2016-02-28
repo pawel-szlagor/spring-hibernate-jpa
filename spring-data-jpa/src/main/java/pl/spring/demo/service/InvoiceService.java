@@ -1,5 +1,6 @@
 package pl.spring.demo.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import pl.spring.demo.to.InvoiceTo;
@@ -9,7 +10,7 @@ import pl.spring.demo.to.InvoiceTo;
  */
 public interface InvoiceService {
 
-    String amountInWords(double amount);
+    String amountInWords(BigDecimal amount);
     List<InvoiceTo> findAllInvoices();
     InvoiceTo findInvoiceById(Long id);
 }

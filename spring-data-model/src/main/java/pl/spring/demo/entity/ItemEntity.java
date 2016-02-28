@@ -49,7 +49,7 @@ public class ItemEntity implements Serializable {
 
     @Transient
     public Money getTaxValue(){
-        return getTotalNetto().multipliedBy(product.getTaxRate().getValue(), RoundingMode.HALF_UP);
+        return getTotalNetto().multipliedBy(product.getTaxRate().getValue() * 0.01, RoundingMode.HALF_UP);
         //return Money.zero(CurrencyUnit.EUR);
     }
 

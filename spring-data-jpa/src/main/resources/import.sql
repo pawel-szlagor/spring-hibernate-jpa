@@ -24,8 +24,8 @@ INSERT INTO customer (company_id) VALUES (1);
 
 INSERT INTO invoice (id, creationDate, paymentDeadline, remarks, saleDate, CUSTOMER_ID) VALUES (1, '2015-01-01', '2016-01-01', 'remarks Przykładowe', '2015-03-03', 1);
 
-INSERT INTO tax_rate VALUES (1, 23.0, '23');
-INSERT INTO tax_rate VALUES (2, 8.0, '8');
+INSERT INTO tax_rate (id, TAX_RATE_DESC, TAX_RATE_VALUE) VALUES (1, '23,0', 23.0);
+INSERT INTO tax_rate (id, TAX_RATE_DESC, TAX_RATE_VALUE) VALUES (2, '8,0', 8.0);
 
 INSERT INTO product (id, measureUnit, name, pkwiu, CURRENCY, AMOUNT, taxRate_TAX_RATE_VALUE) VALUES (1, 'KG', 'ser', '1234', 'PLN', 4.5, 23);
 INSERT INTO product (id, measureUnit, name, pkwiu, CURRENCY, AMOUNT, taxRate_TAX_RATE_VALUE) VALUES (2, 'KG', 'mleko', 'kwui', 'PLN', 12.50, 8);

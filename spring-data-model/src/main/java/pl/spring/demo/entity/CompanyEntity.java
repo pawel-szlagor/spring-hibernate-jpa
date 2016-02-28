@@ -11,8 +11,11 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import java.io.Serializable;
 
+import org.hibernate.envers.Audited;
+
 @Entity
 @Table(name = "COMPANY")
+@Audited
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class CompanyEntity implements Serializable {
     @Id
@@ -20,13 +23,13 @@ public abstract class CompanyEntity implements Serializable {
     private Long id;
     @Column(nullable = false, length = 100)
     private String name;
-    @Column(nullable = false, length = 50)
+    @Column(nullable = true, length = 50)
     private String street;
-    @Column(nullable = false, length = 5)
+    @Column(nullable = true, length = 5)
     private String postCode;
-    @Column(nullable = false, length = 50)
+    @Column(nullable = true, length = 50)
     private String city;
-    @Column(nullable = false, length = 26)
+    @Column(nullable = true, length = 26)
     private String account;
     @Column(nullable = true, length = 13)
     private String phoneNumber;

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,22 +15,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.xml.xmp.PdfAXmpWriter;
 import com.itextpdf.text.zugferd.InvoiceDOM;
 import com.itextpdf.text.zugferd.profiles.BasicProfile;
 import ma.glasnost.orika.MapperFacade;
+import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.spring.demo.layout.InvoicePDFCreator;
+import pl.spring.demo.service.InvoiceService;
 import pl.spring.demo.to.CustomerTo;
 import pl.spring.demo.to.InvoiceBasicProfileTo;
 import pl.spring.demo.to.InvoiceTo;
@@ -51,6 +48,7 @@ public class InvoicePDFCreatorImpl implements InvoicePDFCreator {
     private static final String PLACE_OF_CREATION = "Turek";
     private final static int PARAGRAPH_LEADING_SMALL = 10;
     private final static int PARAGRAPH_INDENTION = 10;
+    private final static int PARAGRAPH_INDENTION_BIG = 20;
     private final static int PARAGRAPH_LEADING_AVERAGE = 15;
     private final static int PARAGRAPH_LEADING_BIG = 20;
     private ResourceBundle resource;
@@ -59,7 +57,12 @@ public class InvoicePDFCreatorImpl implements InvoicePDFCreator {
     @Autowired
     private MapperFacade mapper;
 
+    @Autowired
+    private InvoiceService invoiceService;
+
     protected Font font10;
+    protected Font font10g;
+    protected Font font10I;
     protected Font font10b;
     protected Font font12;
     protected Font font12b;
@@ -70,6 +73,9 @@ public class InvoicePDFCreatorImpl implements InvoicePDFCreator {
         BaseFont bf = BaseFont.createFont(FONT_REGULAR, BaseFont.CP1250, BaseFont.EMBEDDED);
         BaseFont bfb = BaseFont.createFont(FONTS_CALIBRI_BOLD, BaseFont.CP1250, BaseFont.EMBEDDED);
         font10 = new Font(bf, 10);
+        font10I = new Font(bf, 8, 2, BaseColor.DARK_GRAY);
+        font10g = new Font(bf, 10, 0, BaseColor.GRAY);
+        font10g = new Font(bf, 10, 2);
         font10b = new Font(bfb, 10);
         font12 = new Font(bf, 12);
         font12b = new Font(bfb, 12);
@@ -79,6 +85,15 @@ public class InvoicePDFCreatorImpl implements InvoicePDFCreator {
 
     @Override
     public void createPdf(InvoiceTo invoice) throws Exception {
+        DecimalFormat df = new DecimalFormat();
+        df.setGroupingSize(3);
+        df.setParseBigDecimal(true);
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator(',');
+        df.setDecimalFormatSymbols(dfs);
+        df.setMinimumFractionDigits(2);
+        df.setMaximumFractionDigits(2);
+        df.setMinimumIntegerDigits(1);
         prepareFonts();
         String dest = String.format(DEST, invoice.getid());
         BasicProfile basic = mapper.map(invoice, InvoiceBasicProfileTo.class);
@@ -98,6 +113,7 @@ public class InvoicePDFCreatorImpl implements InvoicePDFCreator {
         ICC_Profile icc = ICC_Profile.getInstance(new FileInputStream(ICC));
         writer.setOutputIntents("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", icc);
 
+        //footer
         // header
         Paragraph p;
         p = new Paragraph(PARAGRAPH_LEADING_SMALL, resource.getString("invoice.placeOfCraetion") + ", " + convertDate(invoice.getCreationDate(), "yyyy-MM-dd"), font10);
@@ -239,49 +255,107 @@ public class InvoicePDFCreatorImpl implements InvoicePDFCreator {
         table.addCell(getTableHeader(resource.getString("invoice.items.table.column.header.discount")));
         table.addCell(getTableHeader(resource.getString("invoice.items.table.column.header.unitprice")));
         table.addCell(getTableHeader(resource.getString("invoice.items.table.column.header.nettovalue")));
-        PdfPCell vatValueCell = getCell(resource.getString("invoice.items.table.column.header.vat"));
+        PdfPCell vatValueCell = getTableHeader(resource.getString("invoice.items.table.column.header.vat"));
+        vatValueCell.setRowspan(1);
         vatValueCell.setColspan(2);
         table.addCell(vatValueCell);
         table.addCell(getTableHeader(resource.getString("invoice.items.table.column.header.grossvalue")));
         table.addCell(getCell(resource.getString("invoice.items.table.column.header.vat.percentage"), Element.ALIGN_CENTER, font10b));
         table.addCell(getCell(resource.getString("invoice.items.table.column.header.vat.value"), Element.ALIGN_CENTER, font10b));
-        document.add(table);
+        table.setHeaderRows(2);
 
         //items rows
-        table = new PdfPTable(10);
-        table.setWidthPercentage(100);
-        table.setSplitLate(true);
-        table.setWidths(relativeColumnWidthsForItemsTable);
-        for (int i = 0; i < invoice.getItems().size(); i++) {
-            ItemTo item = invoice.getItems().get(i);
-            ProductTo product = item.getProduct();
-            table.addCell(getCell(String.valueOf(i + 1), Element.ALIGN_CENTER, font10));
-            table.addCell(getCell(product.getName(), Element.ALIGN_LEFT, font10));
-            table.addCell(getCell(product.getMeasureUnit().name(), Element.ALIGN_CENTER, font10));
-            table.addCell(getCell(String.valueOf(item.getQuantity()), Element.ALIGN_CENTER, font10));
-            table.addCell(getCell("0", Element.ALIGN_CENTER, font10));
-            table.addCell(getCell(String.valueOf(product.getUnitPriceNetto().getAmount()), Element.ALIGN_RIGHT, font10));
-            table.addCell(getCell(String.valueOf(item.getTotalNetto().getAmount()), Element.ALIGN_RIGHT, font10));
-            table.addCell(getCell(String.valueOf(product.getTaxRate().getDesc()), Element.ALIGN_RIGHT, font10));
-            table.addCell(getCell(String.valueOf(item.getTaxValue().getAmount()), Element.ALIGN_CENTER, font10));
-            table.addCell(getCell(String.valueOf(item.getTotalGross().getAmount()), Element.ALIGN_CENTER, font10));
+        for(int k =0; k<50; k++) {
+            for (int i = 0; i < invoice.getItems().size(); i++) {
+                ItemTo item = invoice.getItems().get(i);
+                ProductTo product = item.getProduct();
+                table.addCell(getCell(String.valueOf(i + 1), Element.ALIGN_CENTER, font10));
+                table.addCell(getCell(product.getName(), Element.ALIGN_LEFT, font10));
+                table.addCell(getCell(product.getMeasureUnit().name(), Element.ALIGN_CENTER, font10));
+                table.addCell(getCell(df.format(item.getQuantity()), Element.ALIGN_RIGHT, font10));
+                table.addCell(getCell("0", Element.ALIGN_CENTER, font10));
+                table.addCell(getCell(df.format(product.getUnitPriceNetto().getAmount()), Element.ALIGN_RIGHT, font10));
+                table.addCell(getCell(df.format(item.getTotalNetto().getAmount()), Element.ALIGN_RIGHT, font10));
+                table.addCell(getCell(product.getTaxRate().getDesc(), Element.ALIGN_RIGHT, font10));
+                table.addCell(getCell(df.format(item.getTaxValue().getAmount()), Element.ALIGN_RIGHT, font10));
+                table.addCell(getCell(df.format(item.getTotalGross().getAmount()), Element.ALIGN_RIGHT, font10));
+            }
         }
         document.add(table);
 
         //summary
+        Set<TaxRateTo> taxRatesInInvoice = invoice.getItems().stream().map(ItemTo::getProduct).map(ProductTo::getTaxRate).collect(Collectors.toSet());
+        for (TaxRateTo taxRate : taxRatesInInvoice) {
+            table = new PdfPTable(10);
+            table.setWidthPercentage(100);
+            table.setWidths(relativeColumnWidthsForItemsTable);
+            for (int i = 0; i < 6; i++) {
+                table.addCell(getEmptyCell());
+            }
+            Money nettoSumValue = invoice.getItems().stream().filter(item -> item.getProduct().getTaxRate().equals(taxRate)).map(ItemTo::getTotalNetto).reduce((i, j) -> i.plus(j)).get();
+            table.addCell(getCell(df.format(nettoSumValue.getAmount()), Element.ALIGN_RIGHT, font10b));
+            table.addCell(getCell(taxRate.getDesc(), Element.ALIGN_RIGHT, font10b));
+            Money taxSumValue = invoice.getItems().stream().filter(item -> item.getProduct().getTaxRate().equals(taxRate)).map(ItemTo::getTaxValue).reduce((i, j) -> i.plus(j)).get();
+            table.addCell(getCell(df.format(taxSumValue.getAmount()), Element.ALIGN_RIGHT, font10b));
+            Money grossSumValue = invoice.getItems().stream().filter(item -> item.getProduct().getTaxRate().equals(taxRate)).map(ItemTo::getTotalGross).reduce((i, j) -> i.plus(j)).get();
+            table.addCell(getCell(df.format(grossSumValue.getAmount()), Element.ALIGN_RIGHT, font10b));
+            document.add(table);
+        }
         table = new PdfPTable(10);
         table.setWidthPercentage(100);
         table.setWidths(relativeColumnWidthsForItemsTable);
-        for(int i =0; i< 7; i++){
+        for (int i = 0; i < 5; i++) {
             table.addCell(getEmptyCell());
         }
-        Set<TaxRateTo> taxRatesInInvoice = invoice.getItems().stream().map(ItemTo::getProduct).map(ProductTo::getTaxRate).collect(Collectors.toSet());
-        for (TaxRateTo taxRate : taxRatesInInvoice) {
-            for(int i =0; i< 7; i++){
-                table.addCell(getEmptyCell());
-            }
-            double taxValueSum = invoice.getItems().stream().filter(item -> item.getProduct().getTaxRate().equals(taxRate)).map(ItemTo::getQuantity).reduce((i, j) -> i + j).get();
-        }
+        PdfPCell summaryText = getCell(resource.getString("invoice.items.table.summary.header"), Element.ALIGN_RIGHT, font12b);
+        summaryText.setBorder(PdfPCell.NO_BORDER);
+        table.addCell(summaryText);
+        Money nettoSumValue = invoice.getItems().stream().map(ItemTo::getTotalNetto).reduce((i, j) -> i.plus(j)).get();
+        table.addCell(getCell(df.format(nettoSumValue.getAmount()), Element.ALIGN_RIGHT, font12b));
+        table.addCell(getCell("X", Element.ALIGN_RIGHT, font12b));
+        Money taxSumValue = invoice.getItems().stream().map(ItemTo::getTaxValue).reduce((i, j) -> i.plus(j)).get();
+        table.addCell(getCell(df.format(taxSumValue.getAmount()), Element.ALIGN_RIGHT, font12b));
+        Money grossSumValue = invoice.getItems().stream().map(ItemTo::getTotalGross).reduce((i, j) -> i.plus(j)).get();
+        table.addCell(getCell(df.format(grossSumValue.getAmount()), Element.ALIGN_RIGHT, font12b));
+        document.add(table);
+
+        //summary in words
+        table = new PdfPTable(2);
+        table.setSpacingBefore(25);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(50);
+        table.setWidths(new float[]{0.3f, 0.7f});
+        PdfPCell summaryHeader;
+        summaryHeader = getNotBorderedCell(resource.getString("invoice.items.summary"), Element.ALIGN_RIGHT, font12);
+        PdfPCell summaryDecimal;
+        summaryDecimal = getNotBorderedCell(df.format(grossSumValue.getAmount()) + " " + grossSumValue.getCurrencyUnit(), Element.ALIGN_LEFT, font12);
+        table.addCell(summaryHeader);
+        table.addCell(summaryDecimal);
+        document.add(table);
+
+        table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setWidths(new float[]{0.3f, 0.7f});
+        PdfPCell summaryInWordsHeader;
+        summaryInWordsHeader = getNotBorderedCell(resource.getString("invoice.items.summary.in.words"), Element.ALIGN_RIGHT, font12);
+        PdfPCell summaryInWords;
+        summaryInWords = getNotBorderedCell(invoiceService.amountInWords(grossSumValue.getAmount()), Element.ALIGN_LEFT, font12);
+        table.addCell(summaryInWordsHeader);
+        table.addCell(summaryInWords);
+        document.add(table);
+
+        //signatures
+        table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(100);
+        table.addCell(getNotBorderedCell(resource.getString("invoice.signature.empty.space"), Element.ALIGN_CENTER, font10I));
+        table.addCell(getNotBorderedCell(resource.getString("invoice.signature.empty.space"), Element.ALIGN_CENTER, font10I));
+        PdfPCell sellerSignature = getNotBorderedCell(resource.getString("invoice.signature.seller"), Element.ALIGN_CENTER, font10I);
+        table.addCell(sellerSignature);
+        PdfPCell buyerSignature = getNotBorderedCell(resource.getString("invoice.signature.buyer"), Element.ALIGN_CENTER, font10I);
+        table.addCell(buyerSignature);
+        document.add(table);
+
         // XML version
         InvoiceDOM dom = new InvoiceDOM(basic);
         PdfDictionary parameters = new PdfDictionary();
@@ -294,6 +368,33 @@ public class InvoicePDFCreatorImpl implements InvoicePDFCreator {
         array.add(fileSpec.getReference());
         writer.getExtraCatalog().put(PdfName.AF, array);
         document.close();
+
+        // Create a reader
+        PdfReader reader = new PdfReader(new FileInputStream(dest));
+        // Create a stamper
+        PdfStamper stamper
+                = new PdfStamper(reader, new FileOutputStream(dest));
+        // Loop over the pages and add a header to each page
+        int n = reader.getNumberOfPages();
+        for (int i = 1; i <= n; i++) {
+            getHeaderTable(i, n).writeSelectedRows(
+                    0, -1, 34, 30, stamper.getOverContent(i));
+        }
+        // Close the stamper
+        stamper.close();
+        reader.close();
+    }
+
+    public PdfPTable getHeaderTable(int x, int y) {
+        PdfPTable table = new PdfPTable(1);
+        table.setTotalWidth(527);
+        table.setLockedWidth(true);
+        table.getDefaultCell().setFixedHeight(20);
+        table.getDefaultCell().setBorder(Rectangle.TOP);
+        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
+        table.getDefaultCell().setBorderColor(BaseColor.GRAY);
+        table.addCell(new Phrase(String.format(resource.getString("invoice.page.number"), x, y), font10g));
+        return table;
     }
 
     public PdfPCell getCompanyData(String name, String street, String postCode, String city, String NIP) {
@@ -370,6 +471,18 @@ public class InvoicePDFCreatorImpl implements InvoicePDFCreator {
         table.addCell(getCell(tTotal, Element.ALIGN_RIGHT, font12b));
         table.addCell(getCell(tCurrency, Element.ALIGN_LEFT, font12b));
         return table;
+    }
+
+    public PdfPCell getThickBorderedCell(String value, int alignment, Font font) {
+        PdfPCell cell = getCell(value, alignment, font);
+        cell.setBorderWidth(0.85f);
+        return cell;
+    }
+
+    public PdfPCell getNotBorderedCell(String value, int alignment, Font font) {
+        PdfPCell cell = getCell(value, alignment, font);
+        cell.setBorder(PdfPCell.NO_BORDER);
+        return cell;
     }
 
     public PdfPCell getCell(String value, int alignment, Font font) {

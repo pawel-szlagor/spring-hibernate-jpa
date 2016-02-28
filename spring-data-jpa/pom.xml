@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.jinq</groupId>
             <artifactId>jinq-jpa</artifactId>
-            <version>1.6.2</version>
+            <version>1.7.2</version>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -52,7 +52,11 @@
             <artifactId>usertype.core</artifactId>
             <version>5.0.0.GA</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>4.3.8.Final</version>
+        </dependency>
     </dependencies>
 
 </project>
